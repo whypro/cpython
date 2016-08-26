@@ -104,9 +104,9 @@ whose size is determined when the object is allocated.
  * in addition, be cast to PyVarObject*.
  */
 typedef struct _object {
-    _PyObject_HEAD_EXTRA
-    Py_ssize_t ob_refcnt;
-    struct _typeobject *ob_type;
+    _PyObject_HEAD_EXTRA    /* 包含两个指针，指向堆中的前一个和后一个 PyObject 对象（双向链表） */
+    Py_ssize_t ob_refcnt;   /* 引用计数；Py_ssize_t: signed size_t, PEP-353*/
+    struct _typeobject *ob_type;    /* 类型对象指针 */
 } PyObject;
 
 typedef struct {
@@ -343,33 +343,33 @@ typedef struct _typeobject {
     /* Methods to implement standard operations */
 
     destructor tp_dealloc;
-    printfunc tp_print;
-    getattrfunc tp_getattr;
-    setattrfunc tp_setattr;
+    printfunc tp_print;         /* 打印函数 */
+    getattrfunc tp_getattr;     /* 获取属性，__getattr__() */
+    setattrfunc tp_setattr;     /* 设置属性，__setattr__() */
     void *tp_reserved; /* formerly known as tp_compare */
-    reprfunc tp_repr;
+    reprfunc tp_repr;           /* __repr__() */         
 
     /* Method suites for standard classes */
 
-    PyNumberMethods *tp_as_number;
-    PySequenceMethods *tp_as_sequence;
-    PyMappingMethods *tp_as_mapping;
+    PyNumberMethods *tp_as_number;      /* 数值相关方法 */
+    PySequenceMethods *tp_as_sequence;  /* 序列相关方法 */
+    PyMappingMethods *tp_as_mapping;    /* 映射相关方法 */
 
     /* More standard operations (here for binary compatibility) */
 
-    hashfunc tp_hash;
+    hashfunc tp_hash;   /* 对象 hash 函数 */
     ternaryfunc tp_call;
-    reprfunc tp_str;
+    reprfunc tp_str;    /* __str__() */
     getattrofunc tp_getattro;
     setattrofunc tp_setattro;
 
     /* Functions to access object as input/output buffer */
-    PyBufferProcs *tp_as_buffer;
+    PyBufferProcs *tp_as_buffer;    /* 缓冲区协议，PEP-3118 */
 
     /* Flags to define presence of optional/expanded features */
     unsigned long tp_flags;
 
-    const char *tp_doc; /* Documentation string */
+    const char *tp_doc; /* Documentation string */  /* 文档字符串 */
 
     /* Assigned meaning in release 2.0 */
     /* call function for all accessible objects */
@@ -386,8 +386,9 @@ typedef struct _typeobject {
     Py_ssize_t tp_weaklistoffset;
 
     /* Iterators */
-    getiterfunc tp_iter;
-    iternextfunc tp_iternext;
+    /* 迭代器协议 */
+    getiterfunc tp_iter;        /* 获取迭代器 */
+    iternextfunc tp_iternext;   /* 下一个元素 */
 
     /* Attribute descriptor and subclassing stuff */
     struct PyMethodDef *tp_methods;
@@ -395,18 +396,18 @@ typedef struct _typeobject {
     struct PyGetSetDef *tp_getset;
     struct _typeobject *tp_base;
     PyObject *tp_dict;
-    descrgetfunc tp_descr_get;
-    descrsetfunc tp_descr_set;
+    descrgetfunc tp_descr_get;      /* 描述符 get */
+    descrsetfunc tp_descr_set;      /* 描述符 set */
     Py_ssize_t tp_dictoffset;
-    initproc tp_init;
+    initproc tp_init;               /* __init__() */
     allocfunc tp_alloc;
-    newfunc tp_new;
+    newfunc tp_new;                 /* __new__() */
     freefunc tp_free; /* Low-level free-memory routine */
     inquiry tp_is_gc; /* For PyObject_IS_GC */
-    PyObject *tp_bases;
+    PyObject *tp_bases;             /* 父类指针 */
     PyObject *tp_mro; /* method resolution order */
     PyObject *tp_cache;
-    PyObject *tp_subclasses;
+    PyObject *tp_subclasses;        /* 子类指针 */
     PyObject *tp_weaklist;
     destructor tp_del;
 

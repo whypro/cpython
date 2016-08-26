@@ -2236,7 +2236,7 @@ type_new(PyTypeObject *metatype, PyObject *args, PyObject *kwds)
         goto error;
 
     /* Check for a __slots__ sequence variable in dict, and count it */
-    slots = _PyDict_GetItemId(dict, &PyId___slots__);
+    slots = _PyDict_GetItemId(dict, &PyId___slots__);   /* 通过 key-id 获取字典中的 __slots__ 对象 */
     nslots = 0;
     add_dict = 0;
     add_weak = 0;
